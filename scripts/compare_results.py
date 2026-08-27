@@ -18,6 +18,14 @@ TOLERANCE = 6  # decimal places for ROUND() when comparing floats across methods
 
 def compare_results(conn: sqlite3.Connection) -> bool:
     start = time.perf_counter()
+    # A GROUP BY (data_id, targil_id) over tens of millions of rows needs a
+    # matching index, or SQLite falls back to sorting the whole table (very
+    # slow). Built once (IF NOT EXISTS) and reused by generate_report_data.py.
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_results_group ON results_t (data_id, targil_id)")
+    conn.commit()
+    print(f"Index ready in {time.perf_counter() - start:.2f}s")
+
+    start = time.perf_counter()
     total_combinations = conn.execute(
         "SELECT COUNT(*) FROM (SELECT DISTINCT data_id, targil_id FROM results_t)"
     ).fetchone()[0]

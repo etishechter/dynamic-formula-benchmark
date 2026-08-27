@@ -11,23 +11,30 @@ sqrt/log/power are registered as custom SQLite functions so this works
 regardless of whether the local SQLite build has the math extension
 compiled in; abs() is already built into SQLite.
 
+Timing note: the measured time includes fetchall() - i.e. pulling the
+computed rows back out of SQLite into Python - not just the server-side
+computation. That is a deliberate methodology choice, not an oversight:
+results_t needs the values in the application to be inserted, so fetching
+them is a real, unavoidable cost of "using this method" here - same as
+Python/C# which also have to materialize a results list before saving it.
+
 Usage:
     python solve.py --db ../../payments.db
 """
 import argparse
 import math
-import re
 import sqlite3
 import time
 
-METHOD = "SQL-native"
+from formula_translator import formula_to_sql
 
-POWER_PATTERN = re.compile(r"(\w+)\s*\^\s*(\w+)")
+METHOD = "SQL-native"
 
 
 def to_sql_syntax(expr: str) -> str:
-    """Translates the shared formula syntax (x^y for power) to power(x, y)."""
-    return POWER_PATTERN.sub(r"power(\1,\2)", expr)
+    """Parses the shared formula syntax and returns the equivalent SQL text
+    (handles arbitrary nesting, e.g. (a+b)^2 - see formula_translator.py)."""
+    return formula_to_sql(expr)
 
 
 def register_functions(conn: sqlite3.Connection) -> None:

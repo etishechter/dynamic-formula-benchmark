@@ -176,28 +176,20 @@ public static class FormulaParser
 
     private static Node ParseMultiplicative(List<Token> t, ref int p)
     {
-        var left = ParsePower(t, ref p);
+        var left = ParseUnary(t, ref p);
         while (t[p].Kind == TokKind.Op && t[p].Text is "*" or "/")
         {
             string op = t[p].Text; p++;
-            var right = ParsePower(t, ref p);
+            var right = ParseUnary(t, ref p);
             left = new BinaryNode(op, left, right);
         }
         return left;
     }
 
-    private static Node ParsePower(List<Token> t, ref int p)
-    {
-        var left = ParseUnary(t, ref p);
-        if (t[p].Kind == TokKind.Op && t[p].Text == "^")
-        {
-            p++;
-            var right = ParsePower(t, ref p); // right-associative
-            return new BinaryNode("^", left, right);
-        }
-        return left;
-    }
-
+    // Unary minus binds LOOSER than '^' on its own left (-a^2 == -(a^2), matching
+    // Python's "-2**2 == -4" convention) but a '-' appearing as the right-hand
+    // side of '^' (2^-2) is just that operand's own leading unary minus - handled
+    // naturally because ParsePower's right side recurses back into ParseUnary.
     private static Node ParseUnary(List<Token> t, ref int p)
     {
         if (t[p].Kind == TokKind.Op && t[p].Text == "-")
@@ -205,7 +197,19 @@ public static class FormulaParser
             p++;
             return new UnaryMinusNode(ParseUnary(t, ref p));
         }
-        return ParsePrimary(t, ref p);
+        return ParsePower(t, ref p);
+    }
+
+    private static Node ParsePower(List<Token> t, ref int p)
+    {
+        var left = ParsePrimary(t, ref p);
+        if (t[p].Kind == TokKind.Op && t[p].Text == "^")
+        {
+            p++;
+            var right = ParseUnary(t, ref p); // right-associative, allows 2^-2
+            return new BinaryNode("^", left, right);
+        }
+        return left;
     }
 
     private static Node ParsePrimary(List<Token> t, ref int p)

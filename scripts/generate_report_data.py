@@ -12,6 +12,11 @@ from datetime import datetime, timezone
 
 
 def build_report(conn: sqlite3.Connection) -> dict:
+    # See scripts/compare_results.py - needed for the mismatch-count GROUP BY
+    # below to stay fast at tens of millions of rows.
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_results_group ON results_t (data_id, targil_id)")
+    conn.commit()
+
     formulas = {
         row[0]: {"targil_id": row[0], "targil": row[1], "tnai": row[2], "false_targil": row[3]}
         for row in conn.execute("SELECT targil_id, targil, tnai, false_targil FROM targil_t")
