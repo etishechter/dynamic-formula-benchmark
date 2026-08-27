@@ -1,0 +1,19 @@
+# SQLite data - regenerate with: python db/init_db.py --rows 1000000
+payments.db
+payments.db-journal
+payments.db-wal
+payments.db-shm
+
+# Python
+__pycache__/
+*.pyc
+
+# .NET
+solutions/csharp_solution/bin/
+solutions/csharp_solution/obj/
+
+# Angular / Node
+report/node_modules/
+report/dist/
+report/.angular/
+*.log

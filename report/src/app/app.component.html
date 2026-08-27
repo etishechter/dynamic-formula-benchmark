@@ -1,0 +1,94 @@
+<main>
+  <header>
+    <h1>מסך דוח - השוואת ביצועים לחישוב נוסחאות דינמיות</h1>
+    <p class="subtitle" *ngIf="report">
+      {{ report.dataRowCount | number }} רשומות נתונים &middot;
+      {{ report.formulas.length }} נוסחאות &middot;
+      {{ report.methods.length }} שיטות חישוב
+    </p>
+  </header>
+
+  <p *ngIf="loading">טוען נתונים...</p>
+  <p class="error" *ngIf="error">{{ error }}</p>
+
+  <ng-container *ngIf="report">
+    <section class="verification" [class.ok]="resultsVerified" [class.bad]="!resultsVerified">
+      <span *ngIf="resultsVerified">✔ כל השיטות הניבו תוצאות זהות עבור כל הרשומות והנוסחאות</span>
+      <span *ngIf="!resultsVerified">⚠ נמצאו {{ report.resultsMismatchCount }} אי-התאמות בין תוצאות השיטות</span>
+    </section>
+
+    <!-- Total time per method -->
+    <section class="card">
+      <h2>סה"כ זמן ריצה לכל שיטה (על פני כל הנוסחאות)</h2>
+      <div class="bar-row" *ngFor="let method of methodsSortedByTotal">
+        <div class="bar-label">
+          <span class="dot" [style.background]="info(method).color"></span>
+          {{ info(method).label }}
+          <strong *ngIf="method === fastestMethod" class="badge">הכי מהיר</strong>
+        </div>
+        <div class="bar-track">
+          <div
+            class="bar-fill"
+            [style.width]="barWidth(report.totalsByMethod[method], maxTotal)"
+            [style.background]="info(method).color"
+          ></div>
+        </div>
+        <div class="bar-value">{{ formatTime(report.totalsByMethod[method]) }}</div>
+      </div>
+    </section>
+
+    <!-- Method explanations -->
+    <section class="card">
+      <h2>הסבר קצר על כל שיטה</h2>
+      <div class="methods-grid">
+        <div class="method-card" *ngFor="let method of report.methods">
+          <h3><span class="dot" [style.background]="info(method).color"></span>{{ info(method).label }}</h3>
+          <p>{{ info(method).description }}</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Per-formula breakdown -->
+    <section class="card">
+      <h2>זמני ריצה לפי נוסחה</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>נוסחה</th>
+            <th>תנאי</th>
+            <th *ngFor="let method of report.methods">{{ info(method).label }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let f of report.formulas">
+            <td>{{ f.targilId }}</td>
+            <td>
+              <code>{{ f.targil }}</code>
+              <span class="kind-badge" *ngIf="f.kind === 'conditional'">תנאי</span>
+            </td>
+            <td>
+              <code *ngIf="f.tnai">if({{ f.tnai }}) &hellip; else {{ f.falseTargil }}</code>
+              <span *ngIf="!f.tnai">-</span>
+            </td>
+            <td *ngFor="let method of report.methods">
+              <div class="mini-bar-track">
+                <div
+                  class="mini-bar-fill"
+                  [style.width]="barWidth(f.times[method], maxTimeInFormula(f))"
+                  [style.background]="info(method).color"
+                ></div>
+              </div>
+              <span class="mini-bar-value">{{ formatTime(f.times[method]) }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      נוצר אוטומטית על ידי scripts/generate_report_data.py &middot;
+      {{ report.generatedAt | date: 'dd/MM/yyyy HH:mm' }}
+    </footer>
+  </ng-container>
+</main>

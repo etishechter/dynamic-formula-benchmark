@@ -1,0 +1,161 @@
+{
+  "generatedAt": "2026-08-27T12:36:41.232270+00:00",
+  "dataRowCount": 1000000,
+  "methods": [
+    "CSharp-parser",
+    "Python-eval",
+    "SQL-native"
+  ],
+  "totalsByMethod": {
+    "CSharp-parser": 3.6004232,
+    "Python-eval": 22.586671800003387,
+    "SQL-native": 25.144278700114228
+  },
+  "formulas": [
+    {
+      "targilId": 1,
+      "targil": "a + b",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.1652503,
+        "Python-eval": 1.5456238000188023,
+        "SQL-native": 3.011419200047385
+      }
+    },
+    {
+      "targilId": 2,
+      "targil": "c * 2",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.3696079,
+        "Python-eval": 1.5979072999907658,
+        "SQL-native": 1.6407587000285275
+      }
+    },
+    {
+      "targilId": 3,
+      "targil": "a - b",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.237879,
+        "Python-eval": 1.3387536999653094,
+        "SQL-native": 1.6405470000463538
+      }
+    },
+    {
+      "targilId": 4,
+      "targil": "d / 4",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.2222998,
+        "Python-eval": 1.319450200011488,
+        "SQL-native": 1.5750362999970093
+      }
+    },
+    {
+      "targilId": 5,
+      "targil": "8 * (b + a)",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.3147662,
+        "Python-eval": 1.5232053000363521,
+        "SQL-native": 1.6653309999965131
+      }
+    },
+    {
+      "targilId": 6,
+      "targil": "sqrt(c^2 + d^2)",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.5149387,
+        "Python-eval": 2.2211619000299834,
+        "SQL-native": 3.4796823000069708
+      }
+    },
+    {
+      "targilId": 7,
+      "targil": "log(b) + c",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.3585263,
+        "Python-eval": 1.6119521000073291,
+        "SQL-native": 1.9068971000378951
+      }
+    },
+    {
+      "targilId": 8,
+      "targil": "abs(d - b)",
+      "tnai": null,
+      "falseTargil": null,
+      "kind": "unconditional",
+      "times": {
+        "CSharp-parser": 0.2632917,
+        "Python-eval": 1.7466387000167742,
+        "SQL-native": 1.7852755000349134
+      }
+    },
+    {
+      "targilId": 9,
+      "targil": "b * 2",
+      "tnai": "a > 5",
+      "falseTargil": "b / 2",
+      "kind": "conditional",
+      "times": {
+        "CSharp-parser": 0.2559633,
+        "Python-eval": 2.30794440000318,
+        "SQL-native": 1.8938398999744095
+      }
+    },
+    {
+      "targilId": 10,
+      "targil": "a + 1",
+      "tnai": "b < 10",
+      "falseTargil": "d - 1",
+      "kind": "conditional",
+      "times": {
+        "CSharp-parser": 0.2818744,
+        "Python-eval": 2.3688720999634825,
+        "SQL-native": 1.5212424999917857
+      }
+    },
+    {
+      "targilId": 11,
+      "targil": "1",
+      "tnai": "a == c",
+      "falseTargil": "0",
+      "kind": "conditional",
+      "times": {
+        "CSharp-parser": 0.1932504,
+        "Python-eval": 2.3505025999620557,
+        "SQL-native": 1.7828671999741346
+      }
+    },
+    {
+      "targilId": 12,
+      "targil": "sqrt(a^2 + b^2)",
+      "tnai": "c > d",
+      "falseTargil": "abs(a - b)",
+      "kind": "conditional",
+      "times": {
+        "CSharp-parser": 0.4227752,
+        "Python-eval": 2.6546596999978647,
+        "SQL-native": 3.24138199997833
+      }
+    }
+  ],
+  "resultsMismatchCount": 0
+}
