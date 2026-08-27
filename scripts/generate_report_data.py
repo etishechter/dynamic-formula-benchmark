@@ -1,4 +1,4 @@
-"""Reads log_t / targil_t / results_t and writes a summary JSON file that the
+"""Reads t_log / t_targil / t_results and writes a summary JSON file that the
 Angular report screen (report/) reads directly - no backend server needed.
 
 Usage:
@@ -14,23 +14,23 @@ from datetime import datetime, timezone
 def build_report(conn: sqlite3.Connection) -> dict:
     # See scripts/compare_results.py - needed for the mismatch-count GROUP BY
     # below to stay fast at tens of millions of rows.
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_results_group ON results_t (data_id, targil_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_results_group ON t_results (data_id, targil_id)")
     conn.commit()
 
     formulas = {
-        row[0]: {"targil_id": row[0], "targil": row[1], "tnai": row[2], "false_targil": row[3]}
-        for row in conn.execute("SELECT targil_id, targil, tnai, false_targil FROM targil_t")
+        row[0]: {"targil_id": row[0], "targil": row[1], "tnai": row[2], "targil_false": row[3]}
+        for row in conn.execute("SELECT targil_id, targil, tnai, targil_false FROM t_targil")
     }
 
     log_rows = conn.execute(
-        "SELECT targil_id, method, run_time FROM log_t ORDER BY targil_id, method"
+        "SELECT targil_id, method, run_time FROM t_log ORDER BY targil_id, method"
     ).fetchall()
 
     per_formula = defaultdict(dict)
     totals = defaultdict(float)
     row_counts = defaultdict(int)
 
-    data_row_count = conn.execute("SELECT COUNT(*) FROM data_t").fetchone()[0]
+    data_row_count = conn.execute("SELECT COUNT(*) FROM t_data").fetchone()[0]
 
     for targil_id, method, run_time in log_rows:
         per_formula[targil_id][method] = run_time
@@ -47,7 +47,7 @@ def build_report(conn: sqlite3.Connection) -> dict:
                 "targilId": targil_id,
                 "targil": f.get("targil"),
                 "tnai": f.get("tnai"),
-                "falseTargil": f.get("false_targil"),
+                "falseTargil": f.get("targil_false"),
                 "kind": "conditional" if f.get("tnai") else "unconditional",
                 "times": by_method,
             }
@@ -57,7 +57,7 @@ def build_report(conn: sqlite3.Connection) -> dict:
         """
         SELECT COUNT(*) FROM (
             SELECT data_id, targil_id, COUNT(DISTINCT ROUND(result, 6)) AS distinct_results
-            FROM results_t
+            FROM t_results
             GROUP BY data_id, targil_id
             HAVING distinct_results > 1
         )

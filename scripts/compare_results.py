@@ -1,9 +1,9 @@
 """Verifies that all methods produced identical results for every
-(data_id, targil_id), and prints a run-time comparison summary from log_t.
+(data_id, targil_id), and prints a run-time comparison summary from t_log.
 
 The comparison itself runs as a single SQL aggregate query so it stays fast
 and memory-light even at the full 1,000,000-row / 3-method scale (tens of
-millions of rows in results_t) - it never pulls the whole table into Python.
+millions of rows in t_results) - it never pulls the whole table into Python.
 
 Usage:
     python compare_results.py --db ../payments.db
@@ -21,19 +21,19 @@ def compare_results(conn: sqlite3.Connection) -> bool:
     # A GROUP BY (data_id, targil_id) over tens of millions of rows needs a
     # matching index, or SQLite falls back to sorting the whole table (very
     # slow). Built once (IF NOT EXISTS) and reused by generate_report_data.py.
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_results_group ON results_t (data_id, targil_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_results_group ON t_results (data_id, targil_id)")
     conn.commit()
     print(f"Index ready in {time.perf_counter() - start:.2f}s")
 
     start = time.perf_counter()
     total_combinations = conn.execute(
-        "SELECT COUNT(*) FROM (SELECT DISTINCT data_id, targil_id FROM results_t)"
+        "SELECT COUNT(*) FROM (SELECT DISTINCT data_id, targil_id FROM t_results)"
     ).fetchone()[0]
 
     mismatches = conn.execute(
         f"""
         SELECT data_id, targil_id, COUNT(DISTINCT ROUND(result, {TOLERANCE}))
-        FROM results_t
+        FROM t_results
         GROUP BY data_id, targil_id
         HAVING COUNT(DISTINCT ROUND(result, {TOLERANCE})) > 1
         LIMIT 10
@@ -43,7 +43,7 @@ def compare_results(conn: sqlite3.Connection) -> bool:
         f"""
         SELECT COUNT(*) FROM (
             SELECT data_id, targil_id
-            FROM results_t
+            FROM t_results
             GROUP BY data_id, targil_id
             HAVING COUNT(DISTINCT ROUND(result, {TOLERANCE})) > 1
         )
@@ -56,7 +56,7 @@ def compare_results(conn: sqlite3.Connection) -> bool:
         print(f"MISMATCH: {mismatch_total:,} combinations differ across methods")
         for data_id, targil_id, _ in mismatches:
             rows = conn.execute(
-                "SELECT method, result FROM results_t WHERE data_id=? AND targil_id=?",
+                "SELECT method, result FROM t_results WHERE data_id=? AND targil_id=?",
                 (data_id, targil_id),
             ).fetchall()
             print(f"  data_id={data_id} targil_id={targil_id}  {dict(rows)}")
@@ -70,8 +70,8 @@ def print_timing_summary(conn: sqlite3.Connection) -> None:
     rows = conn.execute(
         """
         SELECT t.targil_id, l.method, l.run_time
-        FROM log_t l
-        JOIN targil_t t ON t.targil_id = l.targil_id
+        FROM t_log l
+        JOIN t_targil t ON t.targil_id = l.targil_id
         ORDER BY t.targil_id, l.method
         """
     ).fetchall()

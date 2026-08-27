@@ -1,4 +1,4 @@
-"""Fills data_t with N rows of random data (fields a, b, c, d).
+"""Fills t_data with N rows of random data (fields a, b, c, d).
 
 Usage:
     python seed_data.py --db ../payments.db --rows 1000000
@@ -14,7 +14,7 @@ BATCH_SIZE = 50_000
 def seed_data(conn: sqlite3.Connection, rows: int, seed: int = 42) -> None:
     random.seed(seed)
     cur = conn.cursor()
-    cur.execute("DELETE FROM data_t")
+    cur.execute("DELETE FROM t_data")
 
     # Values are kept positive (1.0 - 1000.0) so functions like log() and
     # sqrt() used in the sample formulas never hit an invalid domain.
@@ -39,7 +39,7 @@ def seed_data(conn: sqlite3.Connection, rows: int, seed: int = 42) -> None:
         batch = min(BATCH_SIZE, rows - inserted)
         rows_batch = [random_row(inserted + i + 1) for i in range(batch)]
         cur.executemany(
-            "INSERT INTO data_t (data_id, a, b, c, d) VALUES (?, ?, ?, ?, ?)",
+            "INSERT INTO t_data (data_id, a, b, c, d) VALUES (?, ?, ?, ?, ?)",
             rows_batch,
         )
         conn.commit()
@@ -51,7 +51,7 @@ def seed_data(conn: sqlite3.Connection, rows: int, seed: int = 42) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Seed data_t with random rows")
+    parser = argparse.ArgumentParser(description="Seed t_data with random rows")
     parser.add_argument("--db", default="payments.db", help="Path to the SQLite file")
     parser.add_argument("--rows", type=int, default=1000, help="Number of rows to insert")
     args = parser.parse_args()

@@ -8,7 +8,7 @@ namespace SolveCSharp;
 /// <summary>
 /// C# solution: computes dynamic formulas using a hand-written expression
 /// parser/evaluator (see Formula.cs). Each formula is parsed once into an
-/// AST, then evaluated once per row of data_t - the .NET counterpart to the
+/// AST, then evaluated once per row of t_data - the .NET counterpart to the
 /// Python "compile once, eval per row" approach.
 ///
 /// Usage:
@@ -39,7 +39,7 @@ internal static class Program
 
         using (var cleanup = conn.CreateCommand())
         {
-            cleanup.CommandText = "DELETE FROM results_t WHERE method = $m; DELETE FROM log_t WHERE method = $m;";
+            cleanup.CommandText = "DELETE FROM t_results WHERE method = $m; DELETE FROM t_log WHERE method = $m;";
             cleanup.Parameters.AddWithValue("$m", Method);
             cleanup.ExecuteNonQuery();
         }
@@ -83,7 +83,7 @@ internal static class Program
     {
         var formulas = new List<Formula>();
         using var cmd = conn.CreateCommand();
-        cmd.CommandText = "SELECT targil_id, targil, tnai, false_targil FROM targil_t";
+        cmd.CommandText = "SELECT targil_id, targil, tnai, targil_false FROM t_targil";
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {
@@ -105,7 +105,7 @@ internal static class Program
     {
         var rows = new List<DataRow>();
         using var cmd = conn.CreateCommand();
-        cmd.CommandText = "SELECT data_id, a, b, c, d FROM data_t";
+        cmd.CommandText = "SELECT data_id, a, b, c, d FROM t_data";
         using var reader = cmd.ExecuteReader();
         while (reader.Read())
         {
@@ -136,7 +136,7 @@ internal static class Program
             cmd.Parameters.Add(new SqliteParameter($"$r{i}", SqliteType.Real));
         }
         cmd.Parameters.AddWithValue("$method", Method);
-        cmd.CommandText = $"INSERT INTO results_t (data_id, targil_id, method, result) VALUES {valuesSql}";
+        cmd.CommandText = $"INSERT INTO t_results (data_id, targil_id, method, result) VALUES {valuesSql}";
         cmd.Prepare();
         return cmd;
     }
@@ -151,7 +151,7 @@ internal static class Program
 
         // Batched multi-row INSERT (chunks of InsertBatchSize) instead of one
         // ExecuteNonQuery per row - cuts per-statement parse/step overhead
-        // dramatically, which matters once data_t reaches ~1,000,000 rows.
+        // dramatically, which matters once t_data reaches ~1,000,000 rows.
         // The full-size batch command is built and prepared once, then reused
         // (only its parameter values change) for every full chunk.
         SqliteCommand? fullBatchCmd = null;
@@ -200,7 +200,7 @@ internal static class Program
         {
             insertLog.Transaction = tx;
             insertLog.CommandText =
-                "INSERT INTO log_t (targil_id, method, run_time) VALUES ($targil_id, $method, $run_time)";
+                "INSERT INTO t_log (targil_id, method, run_time) VALUES ($targil_id, $method, $run_time)";
             insertLog.Parameters.AddWithValue("$targil_id", targilId);
             insertLog.Parameters.AddWithValue("$method", Method);
             insertLog.Parameters.AddWithValue("$run_time", elapsedSeconds);

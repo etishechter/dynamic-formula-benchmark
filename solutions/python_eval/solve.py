@@ -1,8 +1,8 @@
 """Python solution: computes dynamic formulas using compile()/eval().
 
-For every formula in targil_t, the formula (and its optional condition /
+For every formula in t_targil, the formula (and its optional condition /
 false-branch) is compiled once into a code object, then evaluated once per
-row of data_t in a plain Python loop. This is the "interpreted, row by row"
+row of t_data in a plain Python loop. This is the "interpreted, row by row"
 approach - the baseline the other two methods (C# / native SQL) are compared
 against.
 
@@ -30,22 +30,22 @@ def compile_expr(expr: str):
 
 
 def load_formulas(conn: sqlite3.Connection):
-    cur = conn.execute("SELECT targil_id, targil, tnai, false_targil FROM targil_t")
+    cur = conn.execute("SELECT targil_id, targil, tnai, targil_false FROM t_targil")
     formulas = []
-    for targil_id, targil, tnai, false_targil in cur.fetchall():
+    for targil_id, targil, tnai, targil_false in cur.fetchall():
         formulas.append(
             {
                 "targil_id": targil_id,
                 "targil_code": compile_expr(targil),
                 "tnai_code": compile_expr(tnai) if tnai else None,
-                "false_code": compile_expr(false_targil) if false_targil else None,
+                "false_code": compile_expr(targil_false) if targil_false else None,
             }
         )
     return formulas
 
 
 def load_data(conn: sqlite3.Connection):
-    cur = conn.execute("SELECT data_id, a, b, c, d FROM data_t")
+    cur = conn.execute("SELECT data_id, a, b, c, d FROM t_data")
     return cur.fetchall()
 
 
@@ -64,8 +64,8 @@ def run(db_path: str) -> None:
     try:
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA synchronous=NORMAL")
-        conn.execute("DELETE FROM results_t WHERE method = ?", (METHOD,))
-        conn.execute("DELETE FROM log_t WHERE method = ?", (METHOD,))
+        conn.execute("DELETE FROM t_results WHERE method = ?", (METHOD,))
+        conn.execute("DELETE FROM t_log WHERE method = ?", (METHOD,))
         conn.commit()
 
         formulas = load_formulas(conn)
@@ -81,11 +81,11 @@ def run(db_path: str) -> None:
             elapsed = time.perf_counter() - start
 
             conn.executemany(
-                "INSERT INTO results_t (data_id, targil_id, method, result) VALUES (?, ?, ?, ?)",
+                "INSERT INTO t_results (data_id, targil_id, method, result) VALUES (?, ?, ?, ?)",
                 results,
             )
             conn.execute(
-                "INSERT INTO log_t (targil_id, method, run_time) VALUES (?, ?, ?)",
+                "INSERT INTO t_log (targil_id, method, run_time) VALUES (?, ?, ?)",
                 (formula["targil_id"], METHOD, elapsed),
             )
             conn.commit()

@@ -4,7 +4,7 @@ Instead of pulling rows into the application and looping (like the Python
 solution), this builds one dynamic SQL SELECT statement per formula (mirrors
 EXECUTE IMMEDIATE / sp_executesql from the assignment spec - SQLite has no
 stored procedures, so the "dynamic SQL" is built and executed directly) and
-lets the database engine evaluate the expression for every row of data_t in
+lets the database engine evaluate the expression for every row of t_data in
 a single set-based query.
 
 sqrt/log/power are registered as custom SQLite functions so this works
@@ -14,7 +14,7 @@ compiled in; abs() is already built into SQLite.
 Timing note: the measured time includes fetchall() - i.e. pulling the
 computed rows back out of SQLite into Python - not just the server-side
 computation. That is a deliberate methodology choice, not an oversight:
-results_t needs the values in the application to be inserted, so fetching
+t_results needs the values in the application to be inserted, so fetching
 them is a real, unavoidable cost of "using this method" here - same as
 Python/C# which also have to materialize a results list before saving it.
 
@@ -43,15 +43,15 @@ def register_functions(conn: sqlite3.Connection) -> None:
     conn.create_function("power", 2, lambda x, y: x ** y)
 
 
-def build_query(targil: str, tnai: str | None, false_targil: str | None) -> str:
+def build_query(targil: str, tnai: str | None, targil_false: str | None) -> str:
     targil_sql = to_sql_syntax(targil)
     if tnai:
         tnai_sql = to_sql_syntax(tnai)
-        false_sql = to_sql_syntax(false_targil)
+        false_sql = to_sql_syntax(targil_false)
         expr = f"CASE WHEN ({tnai_sql}) THEN ({targil_sql}) ELSE ({false_sql}) END"
     else:
         expr = targil_sql
-    return f"SELECT data_id, ({expr}) AS result FROM data_t"
+    return f"SELECT data_id, ({expr}) AS result FROM t_data"
 
 
 def run(db_path: str) -> None:
@@ -61,17 +61,17 @@ def run(db_path: str) -> None:
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute("PRAGMA synchronous=NORMAL")
 
-        conn.execute("DELETE FROM results_t WHERE method = ?", (METHOD,))
-        conn.execute("DELETE FROM log_t WHERE method = ?", (METHOD,))
+        conn.execute("DELETE FROM t_results WHERE method = ?", (METHOD,))
+        conn.execute("DELETE FROM t_log WHERE method = ?", (METHOD,))
         conn.commit()
 
         formulas = conn.execute(
-            "SELECT targil_id, targil, tnai, false_targil FROM targil_t"
+            "SELECT targil_id, targil, tnai, targil_false FROM t_targil"
         ).fetchall()
         print(f"Loaded {len(formulas)} formulas")
 
-        for targil_id, targil, tnai, false_targil in formulas:
-            query = build_query(targil, tnai, false_targil)
+        for targil_id, targil, tnai, targil_false in formulas:
+            query = build_query(targil, tnai, targil_false)
 
             start = time.perf_counter()
             rows = conn.execute(query).fetchall()
@@ -79,11 +79,11 @@ def run(db_path: str) -> None:
 
             results = [(data_id, targil_id, METHOD, result) for data_id, result in rows]
             conn.executemany(
-                "INSERT INTO results_t (data_id, targil_id, method, result) VALUES (?, ?, ?, ?)",
+                "INSERT INTO t_results (data_id, targil_id, method, result) VALUES (?, ?, ?, ?)",
                 results,
             )
             conn.execute(
-                "INSERT INTO log_t (targil_id, method, run_time) VALUES (?, ?, ?)",
+                "INSERT INTO t_log (targil_id, method, run_time) VALUES (?, ?, ?)",
                 (targil_id, METHOD, elapsed),
             )
             conn.commit()

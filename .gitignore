@@ -11,6 +11,11 @@ __pycache__/
 # .NET
 solutions/csharp_solution/bin/
 solutions/csharp_solution/obj/
+solutions/csharp_solution.Tests/bin/
+solutions/csharp_solution.Tests/obj/
+
+# pytest
+.pytest_cache/
 
 # Angular / Node
 report/node_modules/

@@ -34,7 +34,7 @@ def init_db(db_path: str, rows: int) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Initialize and seed the benchmark database")
     parser.add_argument("--db", default=str(HERE.parent / "payments.db"), help="Path to the SQLite file")
-    parser.add_argument("--rows", type=int, default=1000, help="Number of data_t rows to generate")
+    parser.add_argument("--rows", type=int, default=1000, help="Number of t_data rows to generate")
     args = parser.parse_args()
 
     init_db(args.db, args.rows)

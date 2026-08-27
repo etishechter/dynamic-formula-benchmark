@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-27T18:32:06.585805+00:00",
+  "generatedAt": "2026-08-27T20:45:50.938041+00:00",
   "dataRowCount": 1000000,
   "methods": [
     "CSharp-parser",
@@ -7,9 +7,9 @@
     "SQL-native"
   ],
   "totalsByMethod": {
-    "CSharp-parser": 2.0819036000000004,
-    "Python-eval": 21.70713950000936,
-    "SQL-native": 25.614233300089836
+    "CSharp-parser": 2.3074662000000004,
+    "Python-eval": 57.12709700001869,
+    "SQL-native": 40.804127599985804
   },
   "formulas": [
     {
@@ -19,9 +19,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.1258524,
-        "Python-eval": 1.6159476000466384,
-        "SQL-native": 4.209660799999256
+        "CSharp-parser": 0.1492782,
+        "Python-eval": 5.975850399991032,
+        "SQL-native": 1.8820953000104055
       }
     },
     {
@@ -31,9 +31,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.1121569,
-        "Python-eval": 1.317358799977228,
-        "SQL-native": 1.185991499980446
+        "CSharp-parser": 0.2642237,
+        "Python-eval": 3.4126670000259764,
+        "SQL-native": 2.389082200010307
       }
     },
     {
@@ -43,9 +43,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.1021433,
-        "Python-eval": 1.1974036000319757,
-        "SQL-native": 1.1825799999642186
+        "CSharp-parser": 0.1042615,
+        "Python-eval": 3.1675108000054024,
+        "SQL-native": 6.553665599960368
       }
     },
     {
@@ -55,9 +55,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.092304,
-        "Python-eval": 1.4280212000012398,
-        "SQL-native": 1.2518841000273824
+        "CSharp-parser": 0.1270727,
+        "Python-eval": 2.5627304000081494,
+        "SQL-native": 2.554891400039196
       }
     },
     {
@@ -67,9 +67,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.1451047,
-        "Python-eval": 2.3690635000239126,
-        "SQL-native": 1.3338785000378266
+        "CSharp-parser": 0.1744523,
+        "Python-eval": 6.4401264999760315,
+        "SQL-native": 3.311461499950383
       }
     },
     {
@@ -79,9 +79,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.3033496,
-        "Python-eval": 1.973539799975697,
-        "SQL-native": 4.240735600003973
+        "CSharp-parser": 0.3499581,
+        "Python-eval": 6.700212399999145,
+        "SQL-native": 6.1008110999828205
       }
     },
     {
@@ -91,9 +91,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.1434783,
-        "Python-eval": 1.570560599968303,
-        "SQL-native": 2.1970501000178047
+        "CSharp-parser": 0.2015756,
+        "Python-eval": 4.67755500000203,
+        "SQL-native": 3.0717281000106595
       }
     },
     {
@@ -103,9 +103,9 @@
       "falseTargil": null,
       "kind": "unconditional",
       "times": {
-        "CSharp-parser": 0.1450532,
-        "Python-eval": 1.0929994999896735,
-        "SQL-native": 1.0912223000195809
+        "CSharp-parser": 0.089722,
+        "Python-eval": 3.5412473999895155,
+        "SQL-native": 2.284911099995952
       }
     },
     {
@@ -115,9 +115,9 @@
       "falseTargil": "b / 2",
       "kind": "conditional",
       "times": {
-        "CSharp-parser": 0.2584968,
-        "Python-eval": 1.846446499985177,
-        "SQL-native": 2.710325499996543
+        "CSharp-parser": 0.0837866,
+        "Python-eval": 2.7076500999974087,
+        "SQL-native": 3.0205029000062495
       }
     },
     {
@@ -127,9 +127,9 @@
       "falseTargil": "d - 1",
       "kind": "conditional",
       "times": {
-        "CSharp-parser": 0.1685388,
-        "Python-eval": 2.733604600012768,
-        "SQL-native": 1.783646400028374
+        "CSharp-parser": 0.1551859,
+        "Python-eval": 2.983043499989435,
+        "SQL-native": 2.128532400005497
       }
     },
     {
@@ -139,9 +139,9 @@
       "falseTargil": "0",
       "kind": "conditional",
       "times": {
-        "CSharp-parser": 0.1354799,
-        "Python-eval": 1.5787312000175007,
-        "SQL-native": 1.2633405000087805
+        "CSharp-parser": 0.1884172,
+        "Python-eval": 3.475998800015077,
+        "SQL-native": 2.4359178000013344
       }
     },
     {
@@ -151,9 +151,9 @@
       "falseTargil": "abs(a - b)",
       "kind": "conditional",
       "times": {
-        "CSharp-parser": 0.3499457,
-        "Python-eval": 2.983462599979248,
-        "SQL-native": 3.1639180000056513
+        "CSharp-parser": 0.4195324,
+        "Python-eval": 11.48250470001949,
+        "SQL-native": 5.070528200012632
       }
     }
   ],
