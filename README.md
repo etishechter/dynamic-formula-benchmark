@@ -2,6 +2,9 @@
 
 פתרון למשימת "מנגנון חישוב דינמי" - מערכת שלומדת נוסחאות חישוב תשלומים בזמן ריצה ממסד הנתונים (במקום לקבע אותן בקוד), ומשווה 3 שיטות שונות למימוש החישוב הדינמי מבחינת ביצועים.
 
+🔗 **מסך הדוח החי:** https://etishechter.github.io/dynamic-formula-benchmark/
+📦 **הקוד:** https://github.com/etishechter/dynamic-formula-benchmark
+
 ## תוכן העניינים
 
 - [רקע ומבנה הפרויקט](#רקע-ומבנה-הפרויקט)
@@ -211,25 +214,10 @@ npm start          # פותח שרת פיתוח על http://localhost:4200
 
 ## העלאה ל-GitHub ולענן
 
-**1. יצירת ה-repo והעלאת הקוד (אחרי התקנת Git):**
-```powershell
-cd "C:\Users\ester.finkel\Documents\dynamic-formula-benchmark"
-git init
-git add .
-git commit -m "Dynamic formula benchmark - Python / SQL / C# + Angular report"
-git branch -M main
-git remote add origin https://github.com/<your-username>/<repo-name>.git
-git push -u origin main
-```
-(`payments.db` לא יועלה - הוא ב-`.gitignore` בגלל גודלו (~2.3GB); כל בודק יכול לשחזר אותו עם `python db/init_db.py --rows 1000000`.)
+הקוד נמצא ב-GitHub: https://github.com/etishechter/dynamic-formula-benchmark
 
-**2. פרסום מסך הדוח לצפייה חיה (נדרש קישור תקין לפי האפיון):**
-```powershell
-cd report
-npm run build
-```
-את `report/dist/report/browser` (כולל `report-data.json`) אפשר להעלות לכל שירות אחסון סטטי חינמי, למשל:
-- **GitHub Pages** - `gh-pages` branch מתוך `dist/report/browser`
-- **Netlify** / **Vercel** - גרירת התיקייה ל-drag-and-drop deploy, או חיבור ה-repo
+(`payments.db` לא הועלה - הוא ב-`.gitignore` בגלל גודלו (~2.3GB); כל בודק יכול לשחזר אותו עם `python db/init_db.py --rows 1000000`.)
 
-לאחר הפרסום, יש להוסיף את הקישור לדוח החי בראש קובץ ה-README הזה.
+**מסך הדוח מתפרסם אוטומטית ל-GitHub Pages** בכל push ל-`main`, דרך [`.github/workflows/deploy-report.yml`](.github/workflows/deploy-report.yml) (GitHub Actions בונה את פרויקט ה-Angular ומפרסם אותו - אין צורך בפעולה ידנית מעבר להפעלה חד-פעמית של GitHub Pages בהגדרות ה-repo: **Settings → Pages → Source: GitHub Actions**).
+
+קישור חי למסך הדוח: **https://etishechter.github.io/dynamic-formula-benchmark/**
